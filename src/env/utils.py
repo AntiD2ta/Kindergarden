@@ -146,5 +146,6 @@ def mess_up(house, s):
                 break
 
 
+def count_dirt(house):
 def bernoulli(p = 0.5):
     return random() < p
