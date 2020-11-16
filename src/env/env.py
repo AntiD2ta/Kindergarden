@@ -49,7 +49,7 @@ class Env:
             self.running = False
 
     def change(self):
-        while self.running:
+        while self.running or self.time < 100:
             #//TODO: Move robot
             if self.time % self.t == 0:
                 self.variate_env()
