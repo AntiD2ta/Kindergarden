@@ -1,4 +1,4 @@
-from .string import EMPTY, CORRAL
+from .string import BABY, DIRT, EMPTY, CORRAL, ROBOT
 
 class Cell:
     def __init__(self, value=EMPTY):
@@ -9,14 +9,21 @@ class Cell:
     def update(self, value, check=[], old=None):
         if self.value in check:
             return False
+
         if self.value == CORRAL:
-            self.value = CORRAL + '-' + value
+            self.value = f'{CORRAL}-{value}'
+        elif self.value == DIRT and value == f'{ROBOT}-{BABY}':
+            self.value = f'{DIRT}-{value}'
         else:
             self.value = value
         
         if old:
             if old.isFixed:
+                if BABY in old.value:
+                    old.update(f'{CORRAL}-{BABY}')
                 old.update(CORRAL)
+            elif old.dirty:
+                old.update(DIRT)
             else:
                 old.update(EMPTY)
         return True
