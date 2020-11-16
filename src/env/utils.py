@@ -139,7 +139,8 @@ def mess_up(house, s):
     while mess:
         for (x, y) in s:
             i, j = get_adjacents(house, (x, y), True)[0]
-            house[i][j].update(DIRT, [CORRAL, DIRT, BABY, OBSTACLE, ROBOT]):
+            if house[i][j].update(DIRT, [CORRAL, DIRT, BABY, OBSTACLE, ROBOT]):
+                house[i][j].dirty = True
             mess -= 1
             if mess == 0:
                 break
