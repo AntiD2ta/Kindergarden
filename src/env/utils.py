@@ -19,7 +19,7 @@ def build_corral(house, c):
 
 
 def generate_babies(house, b):
-    n, m = (len(house), len(house[0]))
+    n, m = get_length(house)
     babies = set()
     while b:
         i, j = gen_coordenates(n, m)
@@ -30,7 +30,7 @@ def generate_babies(house, b):
 
 
 def generate_obstacules(house, obstacules):
-    n, m = (len(house), len(house[0]))
+    n, m = get_length(house)
     remaining = n * m * obstacules // 100
     while remaining:
         i, j = gen_coordenates(n, m)
@@ -39,7 +39,7 @@ def generate_obstacules(house, obstacules):
 
 
 def generate_dirt(house, dirtiness):
-    n, m = (len(house), len(house[0]))
+    n, m = get_length(house)
     remaining = n * m * dirtiness // 100
     while remaining:
         i, j = gen_coordenates(n, m)
@@ -57,7 +57,7 @@ def validate_args(n, m, dirt, obstacules, babies):
 
 def get_adjacents(house, cur, shuffled=False):
     adj = list()
-    n, m = (len(house), len(house[0]))
+    n, m = get_length(house)
     for d in directions:
         x = cur[0] + d[0]
         y = cur[1] + d[1]
