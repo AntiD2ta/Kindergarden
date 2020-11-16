@@ -1,0 +1,6 @@
+ROBOT    = 'R'
+BABY     = 'B'
+OBSTACLE = '#'
+CORRAL   = 'C'
+EMPTY    = '-'
+DIRT     = '*'
