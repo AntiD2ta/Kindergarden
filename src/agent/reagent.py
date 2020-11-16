@@ -10,6 +10,7 @@ class Reagent(Robot):
             self.garbage_collected += 1
             self.will_clean = False
             house[x][y].update(ROBOT)
+            house[x][y].dirty = False
         elif DIRT in house[x][y].value and not self.carrying_baby:
             self.will_clean = True
         elif house[x][y].value == BABY:
