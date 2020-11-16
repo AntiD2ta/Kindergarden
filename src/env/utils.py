@@ -72,6 +72,13 @@ def gen_coordenates(n, m):
     return (randint(0, n-1), randint(0, m-1))
 
 
+def gen_coordenates_robot(house):
+    n, m = get_length(house)
+    empty_cells = [(i, j) for i in range(n) for j in range(m) if house[i][j].value == EMPTY]
+    idx = randint(0, len(empty_cells) - 1)
+    return empty_cells[idx]
+    
+
 def get_length(house):
     return (len(house), len(house[0]))
 
@@ -96,7 +103,7 @@ def get_free_babies(house, babies):
     return groups
 
 
-def move_babies(house, babies):
+def move_babies(house, babies, log):
     for (x, y) in babies:
         if bernoulli():
             empty_adj = list(filter(lambda x: house[x[0]][x[1]].value in [EMPTY, OBSTACLE], get_adjacents(house, (x, y), True)))
@@ -106,8 +113,10 @@ def move_babies(house, babies):
                     d = (abs(x - i), abs(y - j))
                     if move_obstacules(house, (i, j), d):
                         house[i][j].update(BABY, house[x][y])
+                        log.info(f'Baby at ({x}, {y}) moved to ({i}, {j})')
                 else:
                     house[i][j].update(BABY, house[x][y])
+                    log.info(f'Baby at ({x}, {y}) moved to ({i}, {j})')
 
 
 def move_obstacules(house, pos, d):
@@ -147,5 +156,16 @@ def mess_up(house, s):
 
 
 def count_dirt(house):
+    return len([0 for r in house for c in r if DIRT in c.value])
+
+
 def bernoulli(p = 0.5):
     return random() < p
+
+
+def user_control(on):
+    if on:
+        s = '$'
+        while s != '':
+            print('Press ENTER to continue:')
+            s = input()

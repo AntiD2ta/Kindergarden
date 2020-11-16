@@ -2,7 +2,7 @@ from .string import EMPTY
 from .utils import *
 from .cell import Cell
 from ..logging import LoggerFactory as Logger
-
+from ..agent import current_agent
 
 log = Logger(name="Env")
 
@@ -10,7 +10,7 @@ log = Logger(name="Env")
 class Env:
     def __init__(self, n, m, dirt, obstacules, babies, t):
         if not validate_args(n, m, dirt, obstacules, babies):
-            log.error("Invalid args, there is no empty cells or dirtiness is greater than 60 percent")
+            log.error('Invalid args, there is no empty cells or dirtiness is greater than 60 percent')
 
         house = [[Cell() for _ in range(m)] for _ in range(n)]
         build_corral(house, babies)
@@ -19,49 +19,53 @@ class Env:
         generate_dirt(house, dirt)
         self.house = house
         self.babies = babies_list
-        log.debug("House created")
+        log.debug('House created')
 
         self.t = t
         self.time = 1
         self.running = True
         self.succeded = False
-        #//TODO:build robot
-        log.info("Env created") 
+        self.robot = current_agent(gen_coordenates_robot(self.house))
+        log.info(f'Robot of type {str(self.robot)} created at ({self.robot.pos[0]}, {self.robot.pos[1]})')
+        log.info('Env created') 
 
-    def variate_env(self):
-        move_babies(self.house, self.babies)
+    def change(self):
+        move_babies(self.house, self.babies, log)
         free_babies = get_free_babies(self.house, self.babies)
         babies_in_order = len(free_babies) == 0
 
-        total_mess = 0
-        for r in self.house:
-            total_mess += len(list(filter(lambda x: DIRT in self.house[x[0]][x[1]].value, r)))
-
+        total_mess = count_dirt(self.house)
         if total_mess == 0 and babies_in_order:
-            #//TODO: Finish simulation
+            log.info('The robot completed its job successfully!!!')
             self.running = False
             self.succeded = True
+            return
 
         mess_up(self.house, free_babies)
         n, m = get_length(self.house)
         if total_mess * 100 // (n * m) >= 60:
-            #//TODO: Fire up robot
+            log.info('The robot is fired!!!')
             self.running = False
 
-    def change(self):
+    def simulate(self, interactive):
         while self.running or self.time < 100:
-            #//TODO: Move robot
+            user_control(interactive)
+            self.robot.action(self.house)
             if self.time % self.t == 0:
-                self.variate_env()
+                self.change()
             self.time += 1
+            if interactive:
+                log.info(f'House at time {self.time}:')
+                print(self)
 
-        #//TODO: Clarify this mean
-        mess_mean = 0
-        return (self.succeded, mess_mean)
+        mess = count_dirt(self.house)
+        return (self.succeded, mess)
 
 
     def __str__(self):
-        h = list()
-        for r in self.house:
-            h.append(' '.join([str(c) for c in r]))
+        col_num = [' ']
+        col_num += [f'  {idx}  ' for idx, _ in enumerate(self.house[0])]
+        h = [''.join(col_num)]
+        for idx, r in enumerate(self.house):
+            h.append(str(idx) + '  ' + ' '.join([str(c) for c in r]))
         return '\n'.join(h)
