@@ -1,4 +1,3 @@
-from .string import EMPTY
 from .utils import *
 from .cell import Cell
 from ..logging import LoggerFactory as Logger

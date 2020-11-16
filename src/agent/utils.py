@@ -1,5 +1,4 @@
-from src.env.string import DIRT, OBSTACLE
-from ..env import distance, get_adjacents, directions, get_length, BABY, count_dirt
+from ..shared import get_adjacents, BABY
 
 #BFS
 def closest_target(house, pos, target, check:list):

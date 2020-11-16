@@ -1,8 +1,7 @@
-from .string import *
+from ..shared import *
 from random import randint, shuffle, random
 from math import sqrt
 
-directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]
 
 def build_house(n, m, dirt, obstacules, babies):
     house = [[EMPTY for _ in range(m)] for _ in range(n)]
@@ -79,10 +78,6 @@ def gen_coordenates_robot(house):
     return empty_cells[idx]
     
 
-def get_length(house):
-    return (len(house), len(house[0]))
-
-
 def get_cells(house, typex):
     return [cell for r in house for cell in r if cell.value is typex]
 
@@ -153,10 +148,6 @@ def mess_up(house, s):
             mess -= 1
             if mess == 0:
                 break
-
-
-def count_dirt(house):
-    return len([0 for r in house for c in r if DIRT in c.value])
 
 
 def bernoulli(p = 0.5):

@@ -1,4 +1,4 @@
-from .string import BABY, DIRT, EMPTY, CORRAL, ROBOT
+from ..shared import BABY, DIRT, EMPTY, CORRAL, ROBOT
 
 class Cell:
     def __init__(self, value=EMPTY):

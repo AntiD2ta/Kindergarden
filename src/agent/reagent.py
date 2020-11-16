@@ -1,6 +1,6 @@
 from .robot import Robot
-from ..env import ROBOT, DIRT, BABY, CORRAL, OBSTACLE, get_adjacents
-from .utils import closest_target, count_free_babies, count_dirt
+from ..shared import ROBOT, DIRT, BABY, CORRAL, OBSTACLE, get_adjacents, count_dirt
+from .utils import closest_target, count_free_babies
 from ..logging import LoggerFactory as Logger
 
 
