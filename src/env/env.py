@@ -35,7 +35,7 @@ class Env:
 
         total_mess = 0
         for r in self.house:
-            total_mess += len(list(filter(lambda x: self.house[x[0]][x[1]].value == DIRT, r)))
+            total_mess += len(list(filter(lambda x: DIRT in self.house[x[0]][x[1]].value, r)))
 
         if total_mess == 0 and babies_in_order:
             #//TODO: Finish simulation
