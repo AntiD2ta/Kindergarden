@@ -1,8 +1,7 @@
-from .string import *
+from ..shared import *
 from random import randint, shuffle, random
 from math import sqrt
 
-directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]
 
 def build_house(n, m, dirt, obstacules, babies):
     house = [[EMPTY for _ in range(m)] for _ in range(n)]
@@ -11,15 +10,26 @@ def build_house(n, m, dirt, obstacules, babies):
 def build_corral(house, c):
     n, m = get_length(house)
     i, j = gen_coordenates(n, m)
+    corrals = [(i, j)]
     while c:
         house[i][j].update(CORRAL)
         house[i][j].isFixed = True
-        i, j = list(filter(lambda x: house[x[0]][x[1]].value != CORRAL, get_adjacents(house, (i, j), True)))[0]
+        #This may fail, so I keep a list with the rest of corrals to continue generation for there if adj is empty
+        adj = []
+        while len(adj) == 0:
+            if len(corrals) == 0:
+                return False
+            i, j = corrals.pop()
+            adj = list(filter(lambda x: house[x[0]][x[1]].value != CORRAL, get_adjacents(house, (i, j), True)))
+
+        i, j = adj[0]
+        corrals.append((i, j))
         c -= 1
+    return True
 
 
 def generate_babies(house, b):
-    n, m = (len(house), len(house[0]))
+    n, m = get_length(house)
     babies = set()
     while b:
         i, j = gen_coordenates(n, m)
@@ -30,7 +40,7 @@ def generate_babies(house, b):
 
 
 def generate_obstacules(house, obstacules):
-    n, m = (len(house), len(house[0]))
+    n, m = get_length(house)
     remaining = n * m * obstacules // 100
     while remaining:
         i, j = gen_coordenates(n, m)
@@ -39,7 +49,7 @@ def generate_obstacules(house, obstacules):
 
 
 def generate_dirt(house, dirtiness):
-    n, m = (len(house), len(house[0]))
+    n, m = get_length(house)
     remaining = n * m * dirtiness // 100
     while remaining:
         i, j = gen_coordenates(n, m)
@@ -57,7 +67,7 @@ def validate_args(n, m, dirt, obstacules, babies):
 
 def get_adjacents(house, cur, shuffled=False):
     adj = list()
-    n, m = (len(house), len(house[0]))
+    n, m = get_length(house)
     for d in directions:
         x = cur[0] + d[0]
         y = cur[1] + d[1]
@@ -72,9 +82,12 @@ def gen_coordenates(n, m):
     return (randint(0, n-1), randint(0, m-1))
 
 
-def get_length(house):
-    return (len(house), len(house[0]))
-
+def gen_coordenates_robot(house):
+    n, m = get_length(house)
+    empty_cells = [(i, j) for i in range(n) for j in range(m) if house[i][j].value == EMPTY]
+    idx = randint(0, len(empty_cells) - 1)
+    return empty_cells[idx]
+    
 
 def get_cells(house, typex):
     return [cell for r in house for cell in r if cell.value is typex]
@@ -96,7 +109,7 @@ def get_free_babies(house, babies):
     return groups
 
 
-def move_babies(house, babies):
+def move_babies(house, babies, log):
     for (x, y) in babies:
         if bernoulli():
             empty_adj = list(filter(lambda x: house[x[0]][x[1]].value in [EMPTY, OBSTACLE], get_adjacents(house, (x, y), True)))
@@ -105,9 +118,11 @@ def move_babies(house, babies):
                 if house[i][j].value == OBSTACLE:
                     d = (abs(x - i), abs(y - j))
                     if move_obstacules(house, (i, j), d):
-                        house[i][j].update(BABY, house[x][y])
+                        house[i][j].update(BABY, old=house[x][y])
+                        log.info(f'Baby at ({x}, {y}) moved to ({i}, {j})')
                 else:
-                    house[i][j].update(BABY, house[x][y])
+                    house[i][j].update(BABY, old=house[x][y])
+                    log.info(f'Baby at ({x}, {y}) moved to ({i}, {j})')
 
 
 def move_obstacules(house, pos, d):
@@ -134,16 +149,27 @@ def get_mess(s):
     return mess
 
 
-def mess_up(house, s):
-    mess = get_mess(s)
-    while mess:
-        for (x, y) in s:
-            i, j = get_adjacents(house, (x, y), True)[0]
-            house[i][j].update(DIRT, [CORRAL, DIRT, BABY, OBSTACLE, ROBOT]):
-            mess -= 1
-            if mess == 0:
-                break
+def mess_up(house, s, log):
+    for group in s:
+        mess = get_mess(group)
+        while mess:
+            for (x, y) in group:
+                i, j = get_adjacents(house, (x, y), True)[0]
+                if house[i][j].update(DIRT, [CORRAL, DIRT, BABY, OBSTACLE, ROBOT]):
+                    log.debug(f'Dirt created at ({i}, {j})')
+                    house[i][j].dirty = True
+                mess -= 1
+                if mess == 0:
+                    break
 
 
 def bernoulli(p = 0.5):
     return random() < p
+
+
+def user_control(on):
+    if on:
+        s = '$'
+        while s != '':
+            print('Press ENTER to continue:')
+            s = input()
