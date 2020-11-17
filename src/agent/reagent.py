@@ -29,10 +29,10 @@ class Reagent(Robot):
             self.carrying_baby = True
             house[x][y].update(f'{ROBOT}-{BABY}')
             log.info(f'Loaded baby on ({x}, {y})')
-        elif self.carrying_baby and CORRAL in house[x][y].value:
+        elif self.carrying_baby and CORRAL in house[x][y].value and not f'{CORRAL}-{BABY}' in house[x][y].value:
             self.carrying_baby = False
             house[x][y].update(f'{BABY}-{ROBOT}')
-            log.info(f'Dropped baby in corral at({x}, {y})', 'action')
+            log.info(f'Dropped baby in corral at ({x}, {y})', 'action')
         else:
             adj = get_adjacents(house, self.pos)
             if len(adj) == 0:
@@ -65,7 +65,7 @@ class Reagent(Robot):
 
     def try_move(self, house, target, check=[OBSTACLE]):
         p = closest_target(house, self.pos, target, check)
-        log.debug(f'p: {p}', 'try_move')
+        #log.debug(f'p: {p}', 'try_move')
         if p == []:
             log.debug(f'No path to closest target: {target}', 'try_move')
             log.info(f'I can\'t move!!! Waiting for an environment change', 'try_move')
