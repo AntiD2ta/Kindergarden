@@ -68,6 +68,7 @@ class Env:
                 print(self)
 
         mess = count_dirt(self.house)
+        log.info(f'The robot collected {self.robot.garbage_collected} units of dirt')
         return (self.succeded, mess)
 
 
