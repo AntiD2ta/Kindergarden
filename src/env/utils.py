@@ -10,11 +10,22 @@ def build_house(n, m, dirt, obstacules, babies):
 def build_corral(house, c):
     n, m = get_length(house)
     i, j = gen_coordenates(n, m)
+    corrals = [(i, j)]
     while c:
         house[i][j].update(CORRAL)
         house[i][j].isFixed = True
-        i, j = list(filter(lambda x: house[x[0]][x[1]].value != CORRAL, get_adjacents(house, (i, j), True)))[0]
+        #This may fail, so I keep a list with the rest of corrals to continue generation for there if adj is empty
+        adj = []
+        while len(adj) == 0:
+            if len(corrals) == 0:
+                return False
+            i, j = corrals.pop()
+            adj = list(filter(lambda x: house[x[0]][x[1]].value != CORRAL, get_adjacents(house, (i, j), True)))
+
+        i, j = adj[0]
+        corrals.append((i, j))
         c -= 1
+    return True
 
 
 def generate_babies(house, b):

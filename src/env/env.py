@@ -14,8 +14,10 @@ class Env:
         if not validate_args(n, m, dirt, obstacules, babies):
             log.error('Invalid args, there is no empty cells or dirtiness is greater than 60 percent')
 
-        house = [[Cell() for _ in range(m)] for _ in range(n)]
-        build_corral(house, babies)
+        while True:
+            house = [[Cell() for _ in range(m)] for _ in range(n)]
+            if build_corral(house, babies):
+                break
         generate_babies(house, babies)
         generate_obstacules(house, obstacules)
         generate_dirt(house, dirt)
