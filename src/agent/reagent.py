@@ -7,9 +7,10 @@ from ..logging import LoggerFactory as Logger
 log = Logger('Kindergarden').getChild('Reagent')
 
 
-#Reagent agent. Simple reflex agent
 class Reagent(Robot):
-
+    '''
+    Reagent agent. Simple reflex agent
+    '''
     def action(self, house):
         x, y = self.pos
 
@@ -44,7 +45,6 @@ class Reagent(Robot):
                 self.try_move(house, DIRT)
             else:
                 log.info('There is no dirt to clean or babies to carry!!! Waiting for an environment change', 'action')
-
     
     def move(self, house, pos, steps=1):
         if steps == 0 or pos == []:
