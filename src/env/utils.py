@@ -107,10 +107,10 @@ def move_babies(house, babies, log):
                 if house[i][j].value == OBSTACLE:
                     d = (abs(x - i), abs(y - j))
                     if move_obstacules(house, (i, j), d):
-                        house[i][j].update(BABY, house[x][y])
+                        house[i][j].update(BABY, old=house[x][y])
                         log.info(f'Baby at ({x}, {y}) moved to ({i}, {j})')
                 else:
-                    house[i][j].update(BABY, house[x][y])
+                    house[i][j].update(BABY, old=house[x][y])
                     log.info(f'Baby at ({x}, {y}) moved to ({i}, {j})')
 
 
@@ -138,16 +138,18 @@ def get_mess(s):
     return mess
 
 
-def mess_up(house, s):
-    mess = get_mess(s)
-    while mess:
-        for (x, y) in s:
-            i, j = get_adjacents(house, (x, y), True)[0]
-            if house[i][j].update(DIRT, [CORRAL, DIRT, BABY, OBSTACLE, ROBOT]):
-                house[i][j].dirty = True
-            mess -= 1
-            if mess == 0:
-                break
+def mess_up(house, s, log):
+    for group in s:
+        mess = get_mess(group)
+        while mess:
+            for (x, y) in group:
+                i, j = get_adjacents(house, (x, y), True)[0]
+                if house[i][j].update(DIRT, [CORRAL, DIRT, BABY, OBSTACLE, ROBOT]):
+                    log.debug(f'Dirt created at ({i}, {j})')
+                    house[i][j].dirty = True
+                mess -= 1
+                if mess == 0:
+                    break
 
 
 def bernoulli(p = 0.5):
