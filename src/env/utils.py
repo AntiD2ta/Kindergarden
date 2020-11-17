@@ -93,10 +93,6 @@ def get_cells(house, typex):
     return [cell for r in house for cell in r if cell.value is typex]
 
 
-def distance(x, y): 
-    return int(sqrt(abs(x[0] - y[0]) ** 2 + abs(x[1] - y[1]) ** 2))
-
-
 def get_free_babies(house, babies):
     free_babies = {b for b in babies if not house[b[0]][b[1]].isFixed}
     groups = set()
