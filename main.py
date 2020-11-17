@@ -14,7 +14,7 @@ C : Corral
 
 def main(args, log):
     while True:
-        e = Env(args.rows, args.columns, args.dirtiness, args.obstacules, args.babies, args.time, log)
+        e = Env(args.rows, args.columns, args.dirtiness, args.obstacules, args.babies, args.time)
         log.info('The generated environment is:')
         print(e)
         print(LEYEND)
@@ -22,7 +22,7 @@ def main(args, log):
         s = input()
         if s != 'REPEAT':
             break
-        
+
     succeded, mess = e.simulate(args.interactive)
 
     if not succeded and e.running:

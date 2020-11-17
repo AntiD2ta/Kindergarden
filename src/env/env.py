@@ -2,15 +2,12 @@ from .utils import *
 from .cell import Cell
 from ..agent import current_agent
 from ..shared import ROBOT
-import logging as log
+from ..logging import LoggerFactory as Logger
 
-log = None
+log = Logger('Kindergarden').getChild('Env')
 
 class Env:
-    def __init__(self, n, m, dirt, obstacules, babies, t, logP):
-        global log
-        log = logP.getChild('Env')
-
+    def __init__(self, n, m, dirt, obstacules, babies, t):
         if not validate_args(n, m, dirt, obstacules, babies):
             log.error('Invalid args, there is no empty cells or dirtiness is greater than 60 percent')
 
@@ -29,7 +26,7 @@ class Env:
         self.running = True
         self.succeded = False
         x, y = gen_coordenates_robot(self.house)
-        self.robot = current_agent((x, y), log)
+        self.robot = current_agent((x, y))
         self.house[x][y].update(ROBOT)
         log.info(f'Robot of type {str(self.robot)} created at ({x}, {y})')
         log.info('Env created') 

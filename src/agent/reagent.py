@@ -4,14 +4,11 @@ from .utils import closest_target, count_free_babies
 from ..logging import LoggerFactory as Logger
 
 
-log = None
+log = Logger('Kindergarden').getChild('Reagent')
 
 
+#Reagent agent. Simple reflex agent
 class Reagent(Robot):
-    def __init__(self, pos, logP):
-        global log
-        log = logP.getChild('Reagent')
-        super().__init__(pos)
 
     def action(self, house):
         x, y = self.pos
