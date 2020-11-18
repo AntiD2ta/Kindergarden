@@ -104,9 +104,9 @@ def get_free_babies(house, babies):
     return groups
 
 
-def move_babies(house, babies, log):
+def move_babies(house, babies, log, p):
     for (x, y) in babies:
-        if bernoulli():
+        if bernoulli(p):
             empty_adj = list(filter(lambda x: house[x[0]][x[1]].value in [EMPTY, OBSTACLE], get_adjacents(house, (x, y), True)))
             if len(empty_adj) > 0:
                 i, j = empty_adj[0]
@@ -158,7 +158,7 @@ def mess_up(house, s, log):
                     break
 
 
-def bernoulli(p = 0.5):
+def bernoulli(p):
     return random() < p
 
 
