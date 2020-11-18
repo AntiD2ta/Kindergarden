@@ -35,5 +35,11 @@ class Cell:
                 old.update(EMPTY)
         return True
 
+    def copy(self):
+        new_cell = Cell(self.value)
+        new_cell.dirty = self.dirty
+        new_cell.isFixed = self.isFixed
+        return new_cell
+
     def __str__(self):
         return self.value + ''.join([' ' for _ in range(5 - len(self.value))])

@@ -75,6 +75,14 @@ class Env:
         mess = count_dirt(self.house)
         return (self.succeded, mess)
 
+    def copy_house(self):
+        new_house = list()
+        for r in self.house:
+            new_row = list()
+            for c in r:
+                new_row.append(c.copy())
+            new_house.append(new_row)
+        return new_house
 
     def __str__(self):
         col_num = ['   ']
