@@ -19,23 +19,23 @@ class Reagent(Robot):
             self.will_clean = False
             house[x][y].update(ROBOT)
             house[x][y].dirty = False
-            log.info(f'Dirt cleaned in ({x}, {y})', 'action')
+            log.debug(f'Dirt cleaned in ({x}, {y})', 'action')
         elif DIRT in house[x][y].value and not self.carrying_baby:
             self.will_clean = True
-            log.info(f'I\'ll clean dirt on ({x}, {y}) in the next turn', 'action')
+            log.debug(f'I\'ll clean dirt on ({x}, {y}) in the next turn', 'action')
         elif not self.carrying_baby and BABY in house[x][y].value and not house[x][y].isFixed:
             self.carrying_baby = True
             house[x][y].update(f'{ROBOT}-{BABY}')
-            log.info(f'Loaded baby on ({x}, {y})')
+            log.debug(f'Loaded baby on ({x}, {y})')
         elif self.carrying_baby and CORRAL in house[x][y].value and not f'{CORRAL}-{BABY}' in house[x][y].value:
             self.carrying_baby = False
             house[x][y].update(f'{BABY}-{ROBOT}')
-            log.info(f'Dropped baby in corral at ({x}, {y})', 'action')
+            log.debug(f'Dropped baby in corral at ({x}, {y})', 'action')
         else:
             adj = get_adjacents(house, self.pos)
             if len(adj) == 0:
                 log.debug('No valid adyacents cells to robot', 'action')
-                log.info(f'I can\'t move!!! Waiting for an environment change', 'action')
+                log.debug(f'I can\'t move!!! Waiting for an environment change', 'action')
                 return
             if self.carrying_baby:
                 self.try_move(house, CORRAL, [OBSTACLE, BABY])
@@ -44,7 +44,7 @@ class Reagent(Robot):
             elif count_dirt(house) > 0:
                 self.try_move(house, DIRT)
             else:
-                log.info('There is no dirt to clean or babies to carry!!! Waiting for an environment change', 'action')
+                log.debug('There is no dirt to clean or babies to carry!!! Waiting for an environment change', 'action')
     
     def move(self, house, pos, steps=1):
         if steps == 0 or pos == []:
@@ -57,7 +57,7 @@ class Reagent(Robot):
             value = ROBOT
         house[x][y].update(value, old=cur_cell)
         self.pos = (x, y)
-        log.info(f'Moved to ({x}, {y})', 'move')
+        log.debug(f'Moved to ({x}, {y})', 'move')
         self.move(house, pos, steps - 1)
 
     def try_move(self, house, target, check=[OBSTACLE]):
@@ -65,7 +65,7 @@ class Reagent(Robot):
         #log.debug(f'p: {p}', 'try_move')
         if p == []:
             log.debug(f'No path to closest target: {target}', 'try_move')
-            log.info(f'I can\'t move!!! Waiting for an environment change', 'try_move')
+            log.debug(f'I can\'t move!!! Waiting for an environment change', 'try_move')
             return
         if target == CORRAL:
             self.move(house, p, steps=2)

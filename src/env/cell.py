@@ -10,8 +10,6 @@ class Cell:
         for v in check:
             if v in self.value:
                 return False
-        # if self.value in check:
-        #     return False
 
         if self.isFixed and value != CORRAL:
             if f'{CORRAL}-{BABY}' in self.value and value != BABY:

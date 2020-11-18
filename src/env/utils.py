@@ -1,6 +1,5 @@
 from ..shared import *
 from random import randint, shuffle, random
-from math import sqrt
 
 
 def build_house(n, m, dirt, obstacules, babies):
@@ -115,10 +114,10 @@ def move_babies(house, babies, log):
                     d = (abs(x - i), abs(y - j))
                     if move_obstacules(house, (i, j), d):
                         house[i][j].update(BABY, old=house[x][y])
-                        log.info(f'Baby at ({x}, {y}) moved to ({i}, {j})')
+                        log.debug(f'Baby at ({x}, {y}) moved to ({i}, {j})')
                 else:
                     house[i][j].update(BABY, old=house[x][y])
-                    log.info(f'Baby at ({x}, {y}) moved to ({i}, {j})')
+                    log.debug(f'Baby at ({x}, {y}) moved to ({i}, {j})')
 
 
 def move_obstacules(house, pos, d):
