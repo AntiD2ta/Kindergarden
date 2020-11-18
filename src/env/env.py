@@ -7,7 +7,7 @@ from ..logging import LoggerFactory as Logger
 log = Logger('Kindergarden').getChild('Env')
 
 class Env:
-    def __init__(self, n, m, dirt, obstacules, babies, t):
+    def __init__(self, n, m, dirt, obstacules, babies, t, robot):
         if not validate_args(n, m, dirt, obstacules, babies):
             log.error('Invalid args, there is no empty cells or dirtiness is greater than 60 percent')
 
@@ -26,7 +26,10 @@ class Env:
         self.running = True
         self.succeded = False
         x, y = gen_coordenates_robot(self.house)
-        self.robot = current_agent((x, y))
+        if robot is 'Practical':
+            self.robot = current_agent[robot]((x, y), self.t)
+        else:
+            self.robot = current_agent[robot]((x, y))
         self.house[x][y].update(ROBOT)
         log.info(f'Robot of type {str(self.robot)} created at ({x}, {y})')
         log.info('Env created') 
@@ -41,7 +44,7 @@ class Env:
 
         total_mess = count_dirt(self.house)
         if total_mess == 0 and babies_in_order:
-            log.info('The robot completed its job successfully!!!')
+            log.info('The robot completed its job successfully!!!', 'change')
             self.running = False
             self.succeded = True
             return
@@ -58,14 +61,16 @@ class Env:
             user_control(interactive)
             self.robot.action(self.house)
             if self.time % self.t == 0:
-                log.info('Environment change!!!')
+                log.debug('Environment change!!!', 'simulate')
                 self.change()
             if interactive:
                 log.info(f'House at time {self.time}:')
                 print(self)
 
+        log.info(f'House at the final turn, time {self.time}:')
+        print(self)
+        log.info(f'The robot collected {self.robot.garbage_collected} units of dirt', 'simulate')
         mess = count_dirt(self.house)
-        log.info(f'The robot collected {self.robot.garbage_collected} units of dirt')
         return (self.succeded, mess)
 
 

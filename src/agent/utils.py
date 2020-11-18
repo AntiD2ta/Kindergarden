@@ -1,4 +1,4 @@
-from ..shared import get_adjacents, get_length, distance, BABY, DIRT
+from ..shared import get_adjacents, get_length, BABY, DIRT
 
 #BFS
 def closest_target(house, pos, target, check:list):
@@ -20,6 +20,9 @@ def closest_target(house, pos, target, check:list):
 
 
 def get_parent(p, first, cur, acum):
+    '''
+    Build parent list path
+    '''
     acum.append(cur)
     if p[cur] == first:
         acum.reverse()
@@ -44,14 +47,23 @@ def group_target(house, target, threshold):
     return groups
 
 #DFS
-def paths_to_target(house, pos, target, visited, p, check:list, acum:set):
+def paths_to_target(house, first, pos, target, visited, p, check:list, acum:list, max_path):
     for u in get_adjacents(house, pos):
         value = house[u[0]][u[1]].value
         if u not in visited and value not in check:
             visited.add(u)
             p[u] = pos
-            if value == target:
-                acum.add(frozenset(get_parent(p, pos, u, [])))
-                visited.remove(u)
-                return
-            paths_to_target(house, u, target, visited, p, check, acum)
+            path = get_parent(p, first, u, [])
+            if len(path) <= max_path: 
+                if value == target:
+                    acum.append(path)
+                    visited.remove(u)
+                    continue
+                paths_to_target(house, first, u, target, visited.copy(), p.copy(), check, acum, max_path)
+
+
+def distance(x, y): 
+    '''
+    Manhattan distance
+    '''
+    return abs(x[0] - y[0]) + abs(x[1] - y[1])

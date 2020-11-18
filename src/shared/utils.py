@@ -27,4 +27,7 @@ def count_dirt(house):
 
 
 def distance(x, y): 
+    '''
+    Euclidian distance
+    '''
     return int(sqrt(abs(x[0] - y[0]) ** 2 + abs(x[1] - y[1]) ** 2))
