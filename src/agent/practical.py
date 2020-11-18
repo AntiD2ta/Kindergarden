@@ -1,3 +1,4 @@
+from src.shared.string import EMPTY
 from .reagent import Reagent
 from .utils import closest_target, count_free_babies, group_target, paths_to_target
 from ..shared import count_dirt, get_length, ROBOT, DIRT, BABY, CORRAL, OBSTACLE
@@ -18,8 +19,8 @@ class Practical(Reagent):
     def __init__(self, pos, t):
         self.t = t
         self.babies = 0
-        self.goal = False
         self.mode = ''
+        self.drop = False
         super().__init__(pos)
 
     def action(self, house):
@@ -43,7 +44,7 @@ class Practical(Reagent):
         '''
         beliefs = dict()
         #Top priority intentions
-        if self.goal or self.will_clean or self.carrying_baby:
+        if self.will_clean or self.carrying_baby:
             return beliefs
 
         log.info('Updating state of the environment...', 'get_beliefs')
@@ -90,7 +91,7 @@ class Practical(Reagent):
         Get options(plans) available for the agent given its actual beliefs and its intentions
         '''
         #Top priority intentions
-        if self.goal or self.will_clean or self.carrying_baby:
+        if self.will_clean or self.carrying_baby:
             return self.options
 
         options = beliefs
@@ -138,6 +139,9 @@ class Practical(Reagent):
         '''
         #Top priority intentions
         if self.carrying_baby:
+            if self.drop:
+                self.mode = CAUTIOUS
+                return ('DROP', [])
             return ('GOTO_CORRAL', [])
         if self.will_clean:
             self.garbage_collected += 1
@@ -180,19 +184,24 @@ class Practical(Reagent):
         if task is 'CLEAN':
             house[x][y].update(ROBOT)
             house[x][y].dirty = False
-            self.goal = False
             log.debug(f'Dirt cleaned in ({x}, {y})', 'CMD: CLEAN')
         elif task is 'GOTO_CORRAL':
             log.debug('Executing task GOTO_CORRAL', 'execute')
             if CORRAL in house[x][y].value and not f'{CORRAL}-{BABY}' in house[x][y].value:
                 self.carrying_baby = False
                 house[x][y].update(f'{BABY}-{ROBOT}')
-                self.goal = False
                 log.debug(f'Dropped baby in corral at ({x}, {y})', 'CMD: GOTO_CORRAL')
             else:
-                self.try_move(house, CORRAL, [OBSTACLE, BABY])
+                if not self.try_move(house, CORRAL, [OBSTACLE, BABY]):
+                    self.drop = True
+        elif task is 'DROP':
+            if DIRT in house[x][y].value:
+                self.try_move(house, EMPTY, [OBSTACLE, BABY, DIRT])
+            self.drop = False
+            self.carrying_baby = False
+            house[x][y].update(f'{BABY}-{ROBOT}')
+            log.debug(f'Dropped baby at ({x}, {y})', 'CMD: DROP')
         else:
-            self.goal = True
             if self.mode is CAUTIOUS:
                 self.execute_move(operation, house)
                 x, y = self.pos
@@ -205,7 +214,6 @@ class Practical(Reagent):
 
             if BABY in house[x][y].value and not house[x][y].isFixed:
                 self.carrying_baby = True
-                self.goal = False
                 house[x][y].update(f'{ROBOT}-{BABY}')
                 log.debug(f'Loaded baby on ({x}, {y})', 'execute')
 
@@ -215,9 +223,7 @@ class Practical(Reagent):
             log.debug('Executing task MOVE', 'execute_move')
             self.move(house, args)
         else:
-            log.debug(f'I can\'t move!!! Waiting for an environment change', 'execute_move')
-            self.goal = False    
-            #if carrying baby drop in the next empty cell and change to cautious
+            log.debug(f'I can\'t move!!! Analyzing options... Meanwhile waiting for an environment change', 'execute_move')
      
     def __str__(self):
         return 'Practical'

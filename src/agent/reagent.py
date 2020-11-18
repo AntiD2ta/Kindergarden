@@ -65,12 +65,13 @@ class Reagent(Robot):
         #log.debug(f'p: {p}', 'try_move')
         if p == []:
             log.debug(f'No path to closest target: {target}', 'try_move')
-            log.debug(f'I can\'t move!!! Waiting for an environment change', 'try_move')
-            return
+            log.debug(f'I can\'t move!!! Analyzing options... Meanwhile waiting for an environment change', 'try_move')
+            return False
         if target == CORRAL:
             self.move(house, p, steps=2)
         else:
             self.move(house, p)
+        return True
 
     def __str__(self):
         return 'Reagent'
