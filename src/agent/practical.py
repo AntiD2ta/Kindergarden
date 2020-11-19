@@ -3,10 +3,9 @@ from .reagent import Reagent
 from .utils import closest_target, count_free_babies, group_target, paths_to_target
 from ..shared import count_dirt, get_length, ROBOT, DIRT, BABY, CORRAL, OBSTACLE
 from ..logging import LoggerFactory as Logger
-from time import time
 
 
-log = Logger('Kindergarden').getChild('Practical')
+log = None
 
 
 CAUTIOUS = 'CAUTIOUS'
@@ -17,7 +16,8 @@ class Practical(Reagent):
     Practical reasoning agent. Model-based and goal-based reflex agent
     '''
     def __init__(self, pos, t):
-        self.t = t
+        global log
+        log = Logger('Kindergarden').getChild('Practical')
         self.babies = 0
         self.mode = ''
         self.drop = False

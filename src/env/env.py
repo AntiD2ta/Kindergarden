@@ -4,10 +4,13 @@ from ..agent import current_agent
 from ..shared import ROBOT
 from ..logging import LoggerFactory as Logger
 
-log = Logger('Kindergarden').getChild('Env')
+log = None
 
 class Env:
     def __init__(self, n, m, dirt, obstacules, babies, t, p, robot):
+        global log
+        log = Logger('Kindergarden').getChild('Env')
+
         if not validate_args(n, m, dirt, obstacules, babies):
             log.error('Invalid args, there is no empty cells or dirtiness is greater than 60 percent')
 
