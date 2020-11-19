@@ -13,15 +13,18 @@ C : Corral
 '''
 
 def main(args, log):
-    robot = 'Reagent'
+    robot  = 'Reagent'
+    robotA = 'Practical'
     if args.practical:
-        robot = 'Practical'
+        robot  = 'Practical'
+        robotA = 'Reagent'
         #//HACKME:Monkey patch current_agent
         #src.agent.current_agent.func = current_agent
 
-
+    house = None
     while True:
-        e = Env(args.rows, args.columns, args.dirtiness, args.obstacules, args.babies, args.time, robot)
+        e = Env(args.rows, args.columns, args.dirtiness, args.obstacules, args.babies, args.time, args.bernoulli, robot)
+        house = e.copy_house()
         log.info('The generated environment is:')
         print(e)
         print(LEYEND)
@@ -36,6 +39,42 @@ def main(args, log):
         log.info('The time is over, task failed for robot')
 
     log.info(f'The amount of dirt at the end of this simulation is: {mess}')
+
+    if args.simulation:
+        succeded_first = succeded
+        mess_first = mess
+
+        print('\n')
+        eA = Env(args.rows, args.columns, args.dirtiness, args.obstacules, args.babies, args.time, args.bernoulli, robotA)
+        eA.house = house
+        succeded, mess = eA.simulate(args.interactive)
+
+        if not succeded and e.running:
+            log.info('The time is over, task failed for robot')
+
+        log.info(f'The amount of dirt at the end of this simulation is: {mess}')
+
+        def get_percentage(g):
+            return g * 100 / (args.rows * args.columns)
+
+        print('\n')
+        print('*************************************************************')
+        print('Final Results:', 'Results')
+        print('\n')
+        print(f'Task completed by {robotA} agent: {succeded}')
+        print(f'Task completed by {robot} agent: {succeded_first}')
+        print('\n')
+        print(f'Percentage of dirt at the end of this simulation of the {robotA} agent: {get_percentage(mess)}')
+        print(f'Percentage of dirt at the end of this simulation of the {robot} agent: {get_percentage(mess_first)}')
+        print('\n')
+        print(f'Final house env of {robotA} agent')
+        print('\n')
+        print(eA)
+        print('\n')
+        print(f'Final house env of {robot} agent')
+        print('\n')
+        print(e)
+        print('*************************************************************')
     
 
 if __name__ == '__main__':
@@ -43,16 +82,18 @@ if __name__ == '__main__':
     import os
 
     parser = argparse.ArgumentParser(description='Kindergarden simulator')
-    parser.add_argument('-r', '--rows', type=int, default=10, help='number of rows of the house')
-    parser.add_argument('-c', '--columns', type=int, default=10, help='number of columns of the house')
+    parser.add_argument('-r', '--rows', type=int, default=7, help='number of rows of the house')
+    parser.add_argument('-c', '--columns', type=int, default=8, help='number of columns of the house')
     parser.add_argument('-d', '--dirtiness', type=int, default=30, help='percentage of dirty cells at the start of the simulation')
     parser.add_argument('-o', '--obstacules', type=int, default=20, help='percentage of obstacules at the start of the simulation')
     parser.add_argument('-b', '--babies', type=int, default=5, help='number of babies in the house')
     parser.add_argument('-t', '--time', type=int, default=5, help='number of turns between changes of the environment')
     parser.add_argument('-p', '--practical', type=bool, const=True, nargs='?', help='set if you want to simulate Practical agent. Reagent agent is default')
     parser.add_argument('-P', '--bernoulli', type=float, default=0.5, help='probability of a baby moving in an environment change (0 to 1)')
+    parser.add_argument('-l', '--level', type=str, default='ERROR', help='log level')
     parser.add_argument('-f', '--file', type=bool, const=True, nargs='?', help='set if you want log to a file')
     parser.add_argument('-i', '--interactive', type=bool, const=True, nargs='?', help='set if you want to see what happens in every turn')
+    parser.add_argument('-s', '--simulation', type=bool, const=True, nargs='?', help='set if you want to simulate all the agents')
 
     args = parser.parse_args()
     if not os.path.exists('./logs'):
