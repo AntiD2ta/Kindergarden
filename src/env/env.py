@@ -39,7 +39,7 @@ class Env:
         log.info(f'Robot of type {str(self.robot)} created at ({x}, {y})')
         log.info('Env created') 
 
-    def change(self):
+    def natural_change(self):
         n, m = get_length(self.house)
         babies = [(i, j) for i in range(n) for j in range(m) if self.house[i][j].value == BABY]
 
@@ -60,17 +60,48 @@ class Env:
             log.info('The robot is fired!!!')
             self.running = False
 
+    def random_change(self):
+        n, m = get_length(self.house)
+        for i in range(n):
+            for j in range(m):
+                x, y = gen_coordenates(n, m)
+                self.house[i][j], self.house[x][y] = self.house[x][y], self.house[i][j]
+
+        corrals = [(i, j) for i in range(n) for j in range(m) if CORRAL in self.house[i][j].value]
+        new_corrals = [corrals.pop(0)]
+        while len(corrals) > 0:
+            adj = []
+            while len(adj) == 0:
+                if len(new_corrals) == 0:
+                    self.random_change()
+                    return
+                i, j = new_corrals.pop()
+                adj = list(filter(lambda x: CORRAL not in self.house[x[0]][x[1]].value, get_adjacents(self.house, (i, j), True)))
+
+            i, j = adj[0]
+            x, y = corrals.pop(0)
+            self.house[i][j], self.house[x][y] = self.house[x][y], self.house[i][j]
+            new_corrals.append((i, j))
+
+        robot = [(i, j) for i in range(n) for j in range(m) if ROBOT in self.house[i][j].value][0]
+        self.robot.pos = robot
+
+
     def simulate(self, interactive):
-        while self.running and self.time < 100:
+        while self.running and self.time < self.t * 100:
             self.time += 1
             user_control(interactive)
             self.robot.action(self.house)
-            if self.time % self.t == 0:
-                log.debug('Environment change!!!', 'simulate')
-                self.change()
+            self.natural_change()
             if interactive:
                 log.info(f'House at time {self.time}:')
                 print(self)
+            if self.time % self.t == 0:
+                log.debug('Environment random change!!!', 'simulate')
+                self.random_change()
+                if interactive:
+                    print()
+                    print(self)
 
         log.info(f'House at the final turn, time {self.time}:')
         print(self)
@@ -88,9 +119,9 @@ class Env:
         return new_house
 
     def __str__(self):
-        col_num = ['   ']
+        col_num = ['    ']
         col_num += [f'{idx}     ' for idx, _ in enumerate(self.house[0])]
         h = [''.join(col_num)]
         for idx, r in enumerate(self.house):
-            h.append(str(idx) + '  ' + ' '.join([str(c) for c in r]))
+            h.append(str(idx) + ''.join([' ' for _ in range(2 - len(str(idx)))]) + '  ' + ' '.join([str(c) for c in r]))
         return '\n'.join(h)
