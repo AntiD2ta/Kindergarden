@@ -1,6 +1,5 @@
 from ..shared import *
 from random import randint, shuffle, random
-from math import sqrt
 
 
 def build_house(n, m, dirt, obstacules, babies):
@@ -93,10 +92,6 @@ def get_cells(house, typex):
     return [cell for r in house for cell in r if cell.value is typex]
 
 
-def distance(x, y): 
-    return int(sqrt(abs(x[0] - y[0]) ** 2 + abs(x[1] - y[1]) ** 2))
-
-
 def get_free_babies(house, babies):
     free_babies = {b for b in babies if not house[b[0]][b[1]].isFixed}
     groups = set()
@@ -109,9 +104,9 @@ def get_free_babies(house, babies):
     return groups
 
 
-def move_babies(house, babies, log):
+def move_babies(house, babies, log, p):
     for (x, y) in babies:
-        if bernoulli():
+        if bernoulli(p):
             empty_adj = list(filter(lambda x: house[x[0]][x[1]].value in [EMPTY, OBSTACLE], get_adjacents(house, (x, y), True)))
             if len(empty_adj) > 0:
                 i, j = empty_adj[0]
@@ -119,10 +114,10 @@ def move_babies(house, babies, log):
                     d = (abs(x - i), abs(y - j))
                     if move_obstacules(house, (i, j), d):
                         house[i][j].update(BABY, old=house[x][y])
-                        log.info(f'Baby at ({x}, {y}) moved to ({i}, {j})')
+                        log.debug(f'Baby at ({x}, {y}) moved to ({i}, {j})')
                 else:
                     house[i][j].update(BABY, old=house[x][y])
-                    log.info(f'Baby at ({x}, {y}) moved to ({i}, {j})')
+                    log.debug(f'Baby at ({x}, {y}) moved to ({i}, {j})')
 
 
 def move_obstacules(house, pos, d):
@@ -163,7 +158,7 @@ def mess_up(house, s, log):
                     break
 
 
-def bernoulli(p = 0.5):
+def bernoulli(p):
     return random() < p
 
 

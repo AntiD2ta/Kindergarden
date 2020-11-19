@@ -10,8 +10,6 @@ class Cell:
         for v in check:
             if v in self.value:
                 return False
-        # if self.value in check:
-        #     return False
 
         if self.isFixed and value != CORRAL:
             if f'{CORRAL}-{BABY}' in self.value and value != BABY:
@@ -36,6 +34,12 @@ class Cell:
             else:
                 old.update(EMPTY)
         return True
+
+    def copy(self):
+        new_cell = Cell(self.value)
+        new_cell.dirty = self.dirty
+        new_cell.isFixed = self.isFixed
+        return new_cell
 
     def __str__(self):
         return self.value + ''.join([' ' for _ in range(5 - len(self.value))])

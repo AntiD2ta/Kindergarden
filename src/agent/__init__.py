@@ -1,3 +1,5 @@
 from .reagent import Reagent
+from .practical import Practical
 
-current_agent = Reagent
+current_agent = {'Practical': Practical,
+                 'Reagent': Reagent}

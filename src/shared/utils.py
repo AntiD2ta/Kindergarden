@@ -1,5 +1,7 @@
 from random import shuffle
 from .string import DIRT
+from math import sqrt
+
 
 directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]
 
@@ -22,3 +24,10 @@ def get_length(house):
 
 def count_dirt(house):
     return len([0 for r in house for c in r if DIRT in c.value])
+
+
+def distance(x, y): 
+    '''
+    Euclidian distance
+    '''
+    return int(sqrt(abs(x[0] - y[0]) ** 2 + abs(x[1] - y[1]) ** 2))
