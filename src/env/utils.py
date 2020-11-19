@@ -61,7 +61,7 @@ def validate_args(n, m, dirt, obstacules, babies):
     cells = n * m - babies * 2
     cells -= n * m * dirt // 100
     cells -= n * m * obstacules // 100
-    return cells > 0 and dirt < 60
+    return cells > 0 and dirt < 60 and babies > 0
 
 
 def get_adjacents(house, cur, shuffled=False):
