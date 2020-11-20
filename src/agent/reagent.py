@@ -11,7 +11,7 @@ class Reagent(Robot):
     '''
     Reagent agent. Simple reflex agent
     '''
-    def __init__(self, pos, t=None):
+    def __init__(self, pos):
         global log
         log = Logger('Kindergarden').getChild('Reagent')
         super().__init__(pos)

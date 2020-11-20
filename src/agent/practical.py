@@ -78,7 +78,6 @@ class Practical(Reagent):
 
         beliefs['paths_to_babies'] = paths_to_babies
         beliefs['paths_to_dirt'] = paths_to_dirt
-        beliefs['cur_cell_value'] = house[self.pos[0]][self.pos[1]].value
         return beliefs
 
     def get_options(self, beliefs):
@@ -91,7 +90,7 @@ class Practical(Reagent):
 
         options = beliefs
 
-        #Get best path to garbage
+        #Get best path to dirt
         considering = list()
         for p in options['paths_to_dirt']:
             for g in options['dirt_groups']:
@@ -102,7 +101,7 @@ class Practical(Reagent):
                     break
         considering.sort()
         #log.debug(f'Best paths to dirt: {considering}')
-        options['best_path_dirt'] = None if considering == [] else list(considering[0][2])
+        options['best_path_dirt'] = None if considering == [] else considering[0][2]
 
         #Get best path to baby sorted by occurrence of dirt in the path
         considering.clear()
@@ -111,7 +110,7 @@ class Practical(Reagent):
             considering.append((len(p), -d, p))
         considering.sort()
         #log.debug(f'Best dirty paths to babies: {considering}')
-        options['best_dirty_path_babies'] = None if considering == [] else list(considering[0][2])
+        options['best_dirty_path_babies'] = None if considering == [] else considering[0][2]
 
         #Get best path to baby
         considering.clear()
@@ -124,7 +123,7 @@ class Practical(Reagent):
                     break
         considering.sort()
         #log.debug(f'Best paths to babies: {considering}')
-        options['best_path_babies'] = None if considering == [] else list(considering[0][2])
+        options['best_path_babies'] = None if considering == [] else considering[0][2]
         self.options = options
         return options
 
@@ -166,7 +165,6 @@ class Practical(Reagent):
             log.debug(f'Current mode: DARED')
             if options['best_path_babies']:
                 opt = options['best_path_babies'].copy()
-                self.options['best_path_babies'].pop(0)
                 return ('MOVE', opt)
             return ('BLOCK', [])
 

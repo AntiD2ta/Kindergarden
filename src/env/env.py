@@ -46,6 +46,7 @@ class Env:
         move_babies(self.house, babies, log, self.p)
         free_babies = get_free_babies(self.house, babies)
         babies_in_order = len(free_babies) == 0
+        mess_up(self.house, free_babies, log)
 
         total_mess = count_dirt(self.house)
         if total_mess == 0 and babies_in_order:
@@ -54,7 +55,6 @@ class Env:
             self.succeded = True
             return
 
-        mess_up(self.house, free_babies, log)
         n, m = get_length(self.house)
         if total_mess * 100 // (n * m) >= 60:
             log.info('The robot is fired!!!')

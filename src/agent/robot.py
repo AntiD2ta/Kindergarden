@@ -7,6 +7,3 @@ class Robot:
 
     def action(house):
         pass
-
-    def move(self, house, pos, steps=1):
-        pass
