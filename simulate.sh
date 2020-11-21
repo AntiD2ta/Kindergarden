@@ -1,12 +1,13 @@
 #!/bin/bash
 if [ ! -d ./results ]; then
     mkdir results
-    if [ ! -f ./results/results.txt ]; then
-        touch ./results/results.txt
-    else
-        rm ./results/results.txt
-        touch ./results/results.txt
-    fi
+fi
+
+if [ ! -f ./results/results.txt ]; then
+    touch ./results/results.txt
+else
+    rm ./results/results.txt
+    touch ./results/results.txt
 fi
 
 declare -a simulation
@@ -41,7 +42,7 @@ simulation[14]='-t 2 -d 10 -b 8'
 #insane, t = 1, moving babies with 1, dirtiness at 40%, obtacules at 20% and 6 babies
 simulation[15]='-t 1 -P 1 -d 40 -b 6'
 
-for i in {8..15}; do
+for i in {1..15}; do
     printf "Set %d \n\n" $i
     printf "Set %d: \n\n" $i >>./results/results.txt
     for j in {1..30}; do
