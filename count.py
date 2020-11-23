@@ -28,40 +28,50 @@ with open('./results/results.json', 'w+') as f_json:
                     b = eval(txt[3].partition('Task completed by Practical agent: ')[2])
                     if b:
                         practical['done'] += 1
-                    else:
-                        practical['fired'] += 1
                 else:
                     b = eval(txt[3].partition('Task completed by Reagent agent: ')[2])
                     if b:
                         reagent['done'] += 1
-                    else:
-                        reagent['fired'] += 1
 
                 if 'Practical' in txt[4]:
                     b = eval(txt[4].partition('Task completed by Practical agent: ')[2])
                     if b:
                         practical['done'] += 1
-                    else:
-                        practical['fired'] += 1
                 else:
                     b = eval(txt[4].partition('Task completed by Reagent agent: ')[2])
                     if b:
                         reagent['done'] += 1
-                    else:
-                        reagent['fired'] += 1
 
                 if 'Practical' in txt[7]:
-                    m = eval(txt[7].partition('Percentage of dirt at the end of this simulation of the Practical agent: ')[2])
-                    practical['mess'] += m
+                    b = eval(txt[7].partition('Practical agent fired: ')[2])
+                    if b:
+                        practical['fired'] += 1
                 else:
-                    m = eval(txt[7].partition('Percentage of dirt at the end of this simulation of the Reagent agent: ')[2])
-                    reagent['mess'] += m
+                    b = eval(txt[7].partition('Reagent agent fired: ')[2])
+                    if b:
+                        reagent['fired'] += 1
 
                 if 'Practical' in txt[8]:
-                    m = eval(txt[8].partition('Percentage of dirt at the end of this simulation of the Practical agent: ')[2])
+                    b = eval(txt[8].partition('Practical agent fired: ')[2])
+                    if b:
+                        practical['fired'] += 1
+                else:
+                    b = eval(txt[8].partition('Reagent agent fired: ')[2])
+                    if b:
+                        reagent['fired'] += 1
+
+                if 'Practical' in txt[11]:
+                    m = eval(txt[11].partition('Percentage of dirt at the end of this simulation of the Practical agent: ')[2])
                     practical['mess'] += m
                 else:
-                    m = eval(txt[8].partition('Percentage of dirt at the end of this simulation of the Reagent agent: ')[2])
+                    m = eval(txt[11].partition('Percentage of dirt at the end of this simulation of the Reagent agent: ')[2])
+                    reagent['mess'] += m
+
+                if 'Practical' in txt[12]:
+                    m = eval(txt[12].partition('Percentage of dirt at the end of this simulation of the Practical agent: ')[2])
+                    practical['mess'] += m
+                else:
+                    m = eval(txt[12].partition('Percentage of dirt at the end of this simulation of the Reagent agent: ')[2])
                     reagent['mess'] += m
 
             practical['mess'] /= 30

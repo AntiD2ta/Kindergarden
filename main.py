@@ -33,39 +33,38 @@ def main(args, log):
         if s != 'REPEAT':
             break
 
-    succeded, mess = e.simulate(args.interactive)
+    mean, mess = e.simulate(args.interactive)
 
-    if not succeded and e.running:
+    if e.fired:
         log.info('The time is over, task failed for robot')
 
     log.info(f'The amount of dirt at the end of this simulation is: {mess}')
 
     if args.simulation:
-        succeded_first = succeded
-        mess_first = mess
+        mean_first = mean
 
         print('\n')
         eA = Env(args.rows, args.columns, args.dirtiness, args.obstacules, args.babies, args.time, args.bernoulli, robotA)
         eA.house = house
-        succeded, mess = eA.simulate(args.interactive)
+        mean, mess = eA.simulate(args.interactive)
 
-        if not succeded and e.running:
+        if eA.fired:
             log.info('The time is over, task failed for robot')
 
         log.info(f'The amount of dirt at the end of this simulation is: {mess}')
-
-        def get_percentage(g):
-            return g * 100 / (args.rows * args.columns)
 
         print('\n')
         print('*************************************************************')
         print('Final Results:', 'Results')
         print('\n')
-        print(f'Task completed by {robotA} agent: {succeded}')
-        print(f'Task completed by {robot} agent: {succeded_first}')
+        print(f'Task completed by {robot} agent: {e.succeded}')
+        print(f'Task completed by {robotA} agent: {eA.succeded}')
         print('\n')
-        print(f'Percentage of dirt at the end of this simulation of the {robotA} agent: {get_percentage(mess)}')
-        print(f'Percentage of dirt at the end of this simulation of the {robot} agent: {get_percentage(mess_first)}')
+        print(f'{robot} agent fired: {e.fired}')
+        print(f'{robotA} agent fired: {eA.fired}')
+        print('\n')
+        print(f'Percentage of dirt at the end of this simulation of the {robot} agent: {mean_first}')
+        print(f'Percentage of dirt at the end of this simulation of the {robotA} agent: {mean}')
         print('\n')
         print(f'Final house env of {robotA} agent')
         print('\n')

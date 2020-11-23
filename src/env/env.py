@@ -29,6 +29,8 @@ class Env:
         self.time = 0
         self.running = True
         self.succeded = False
+        self.fired = False
+        self.mess = 0
         x, y = gen_coordenates_robot(self.house)
         if robot is 'Practical':
             self.robot = current_agent[robot]((x, y), self.t)
@@ -59,6 +61,7 @@ class Env:
         if total_mess * 100 // (n * m) >= 60:
             log.info('The robot is fired!!!')
             self.running = False
+            self.fired = True
 
     def random_change(self):
         n, m = get_length(self.house)
@@ -93,6 +96,7 @@ class Env:
             user_control(interactive)
             self.robot.action(self.house)
             self.natural_change()
+            self.mess += get_percentage(count_dirt(self.house), self.house)
             if interactive:
                 log.info(f'House at time {self.time}:')
                 print(self)
@@ -106,8 +110,8 @@ class Env:
         log.info(f'House at the final turn, time {self.time}:')
         print(self)
         log.info(f'The robot collected {self.robot.garbage_collected} units of dirt', 'simulate')
-        mess = count_dirt(self.house)
-        return (self.succeded, mess)
+        mess = self.mess / self.time
+        return (mess, count_dirt(self.house))
 
     def copy_house(self):
         new_house = list()

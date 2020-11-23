@@ -168,3 +168,7 @@ def user_control(on):
         while s != '':
             print('Press ENTER to continue:')
             s = input()
+
+def get_percentage(g, house):
+    n, m = get_length(house)
+    return g * 100 / (n * m)
