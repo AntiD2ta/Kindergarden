@@ -41,8 +41,12 @@ class Practical(Reagent):
 
         #Learn t
         if self.old_pos != self.pos:
-            self.t = self.time - self.t
-            self.time = 0
+            t = self.t
+            self.t = self.time - self.t - 1
+            if self.t == 0:
+                self.t = t
+            self.time = 1
+            log.debug(f't value: {self.t}')
         #Top priority intentions
         if self.will_clean or self.carrying_baby:
             return beliefs
